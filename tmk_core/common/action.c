@@ -883,6 +883,30 @@ void unregister_mods(uint8_t mods)
     }
 }
 
+// serenity additions
+/** \brief Adds the given weak modifiers and sends a keyboard report immediately.
+ *
+ * \param mods A bitfield of modifiers to register.
+ */
+__attribute__((weak)) void register_weak_mods(uint8_t mods) {
+    if (mods) {
+        add_weak_mods(mods);
+        send_keyboard_report();
+    }
+}
+
+/** \brief Removes the given weak modifiers and sends a keyboard report immediately.
+ *
+ * \param mods A bitfield of modifiers to unregister.
+ */
+__attribute__((weak)) void unregister_weak_mods(uint8_t mods) {
+    if (mods) {
+        del_weak_mods(mods);
+        send_keyboard_report();
+    }
+}
+
+
 /** \brief Utilities for actions. (FIXME: Needs better description)
  *
  * FIXME: Needs documentation.

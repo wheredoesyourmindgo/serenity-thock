@@ -285,6 +285,27 @@ uint8_t get_oneshot_mods(void)
 }
 #endif
 
+// serenity additions
+void add_oneshot_mods(uint8_t mods) {
+    if ((oneshot_mods & mods) != mods) {
+#    if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+        oneshot_time = timer_read();
+#    endif
+        oneshot_mods |= mods;
+        oneshot_mods_changed_kb(mods);
+    }
+}
+
+void del_oneshot_mods(uint8_t mods) {
+    if (oneshot_mods & mods) {
+        oneshot_mods &= ~mods;
+#    if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
+        oneshot_time = oneshot_mods ? timer_read() : 0;
+#    endif
+        oneshot_mods_changed_kb(oneshot_mods);
+    }
+}
+
 /** \brief Called when the one shot modifiers have been changed.
  * 
  * \param mods Contains the active modifiers active after the change. 

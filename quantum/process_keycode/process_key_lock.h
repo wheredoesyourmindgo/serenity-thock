@@ -19,6 +19,8 @@
 
 #include "quantum.h"
 
+// serenity additions
+void cancel_key_lock(void);
 bool process_key_lock(uint16_t *keycode, keyrecord_t *record);
 
 #endif // PROCESS_KEY_LOCK_H

@@ -21,10 +21,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 ENV KEYBOARD=thock/conundrum
-ENV KEYMAP=default:uf2
+ENV KEYMAP=wheredoesyourmindgo:uf2
+ENV OPTIONS='-e EXECUTE_ON_FUNC=yes -e QWERTY_BASE=no'
 
 VOLUME /qmk_firmware
 WORKDIR /qmk_firmware
 COPY . .
 
-CMD make $KEYBOARD:$KEYMAP
+CMD make $KEYBOARD:$KEYMAP $OPTIONS

@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "keyboard.h"
 #include "action.h"
 
+// serenity additions
+#define get_highest_layer(state) biton16(state)
 
 /*
  * Default Layer

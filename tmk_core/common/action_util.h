@@ -65,6 +65,9 @@ void clear_macro_mods(void);
 /* oneshot modifier */
 void set_oneshot_mods(uint8_t mods);
 uint8_t get_oneshot_mods(void);
+// serenity additions
+void add_oneshot_mods(uint8_t mods);
+void del_oneshot_mods(uint8_t mods);
 void clear_oneshot_mods(void);
 void oneshot_toggle(void);
 void oneshot_enable(void);
