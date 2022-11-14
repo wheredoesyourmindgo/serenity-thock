@@ -14,30 +14,41 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef ACTION_TAPPING_H
-#define ACTION_TAPPING_H
 
-
+#pragma once
 
 /* period of tapping(ms) */
 #ifndef TAPPING_TERM
-#define TAPPING_TERM    200
+#    define TAPPING_TERM 200
 #endif
-
-//#define RETRO_TAPPING // Tap anyway, even after TAPPING_TERM, as long as there was no interruption
 
 /* tap count needed for toggling a feature */
 #ifndef TAPPING_TOGGLE
-#define TAPPING_TOGGLE  5
+#    define TAPPING_TOGGLE 5
 #endif
 
 #define WAITING_BUFFER_SIZE 8
 
-
 #ifndef NO_ACTION_TAPPING
-uint16_t get_event_keycode(keyevent_t event);
-uint16_t get_tapping_term(uint16_t keycode);
-void action_tapping_process(keyrecord_t record);
+uint16_t get_record_keycode(keyrecord_t *record, bool update_layer_cache);
+uint16_t get_event_keycode(keyevent_t event, bool update_layer_cache);
+void     action_tapping_process(keyrecord_t record);
 #endif
 
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record);
+bool     get_permissive_hold(uint16_t keycode, keyrecord_t *record);
+bool     get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record);
+bool     get_tapping_force_hold(uint16_t keycode, keyrecord_t *record);
+bool     get_retro_tapping(uint16_t keycode, keyrecord_t *record);
+
+#ifdef DYNAMIC_TAPPING_TERM_ENABLE
+extern uint16_t g_tapping_term;
+#endif
+
+#ifdef TAPPING_TERM_PER_KEY
+#    define GET_TAPPING_TERM(keycode, record) get_tapping_term(keycode, record)
+#elif defined(DYNAMIC_TAPPING_TERM_ENABLE)
+#    define GET_TAPPING_TERM(keycode, record) g_tapping_term
+#else
+#    define GET_TAPPING_TERM(keycode, record) (TAPPING_TERM)
 #endif

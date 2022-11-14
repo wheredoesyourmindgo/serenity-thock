@@ -226,38 +226,44 @@ static uint16_t scs_timer[2] = {0, 0};
 static bool grave_esc_was_shifted = false;
 
 /* Convert record into usable keycode via the contained event. */
-uint16_t get_record_keycode(keyrecord_t *record) {
-  return get_event_keycode(record->event);
+uint16_t get_record_keycode(keyrecord_t *record, bool update_layer_cache) {
+#ifdef COMBO_ENABLE
+    if (record->keycode) {
+        return record->keycode;
+    }
+#endif
+    return get_event_keycode(record->event, update_layer_cache);
 }
-
 
 /* Convert event into usable keycode. Checks the layer cache to ensure that it
  * retains the correct keycode after a layer change, if the key is still pressed.
+ * "update_layer_cache" is to ensure that it only updates the layer cache when
+ * appropriate, otherwise, it will update it and cause layer tap (and other keys)
+ * from triggering properly.
  */
-uint16_t get_event_keycode(keyevent_t event) {
-
-  #if !defined(NO_ACTION_LAYER) && !defined(STRICT_LAYER_RELEASE)
+uint16_t get_event_keycode(keyevent_t event, bool update_layer_cache) {
+#if !defined(NO_ACTION_LAYER) && !defined(STRICT_LAYER_RELEASE)
     /* TODO: Use store_or_get_action() or a similar function. */
     if (!disable_action_cache) {
-      uint8_t layer;
+        uint8_t layer;
 
-      if (event.pressed) {
-        layer = layer_switch_get_layer(event.key);
-        update_source_layers_cache(event.key, layer);
-      } else {
-        layer = read_source_layers_cache(event.key);
-      }
-      return keymap_key_to_keycode(layer, event.key);
+        if (event.pressed && update_layer_cache) {
+            layer = layer_switch_get_layer(event.key);
+            update_source_layers_cache(event.key, layer);
+        } else {
+            layer = read_source_layers_cache(event.key);
+        }
+        return keymap_key_to_keycode(layer, event.key);
     } else
-  #endif
-    return keymap_key_to_keycode(layer_switch_get_layer(event.key), event.key);
+#endif
+        return keymap_key_to_keycode(layer_switch_get_layer(event.key), event.key);
 }
 
 /* Main keycode processing function. Hands off handling to other functions,
  * then processes internal Quantum keycodes, then processes ACTIONs.
  */
 bool process_record_quantum(keyrecord_t *record) {
-    uint16_t keycode = get_record_keycode(record);
+    uint16_t keycode = get_record_keycode(record, true);
 
     // This is how you use actions here
     // if (keycode == KC_LEAD) {

@@ -40,6 +40,12 @@ int tp_buttons;
 int retro_tapping_counter = 0;
 #endif
 
+#ifdef IGNORE_MOD_TAP_INTERRUPT_PER_KEY
+__attribute__((weak)) bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
+    return false;
+}
+#endif
+
 #ifdef FAUXCLICKY_ENABLE
 #include <fauxclicky.h>
 #endif
@@ -308,8 +314,12 @@ void process_action(keyrecord_t *record, action_t action)
                     default:
                         if (event.pressed) {
                             if (tap_count > 0) {
-#ifndef IGNORE_MOD_TAP_INTERRUPT
-                                if (record->tap.interrupted) {
+#    if !defined(IGNORE_MOD_TAP_INTERRUPT) || defined(IGNORE_MOD_TAP_INTERRUPT_PER_KEY)
+                            if (
+#        ifdef IGNORE_MOD_TAP_INTERRUPT_PER_KEY
+                                !get_ignore_mod_tap_interrupt(get_event_keycode(record->event, false), record) &&
+#        endif
+                                    record->tap.interrupted) {
                                     dprint("mods_tap: tap: cancel: add_mods\n");
                                     // ad hoc: set 0 to cancel tap
                                     record->tap.count = 0;
@@ -950,9 +960,21 @@ void clear_keyboard_but_mods_and_keys()
  *
  * FIXME: Needs documentation.
  */
-bool is_tap_key(keypos_t key)
-{
-    action_t action = layer_switch_get_action(key);
+bool is_tap_record(keyrecord_t *record) {
+    if (IS_NOEVENT(record->event)) {
+        return false;
+    }
+
+#ifdef COMBO_ENABLE
+    action_t action;
+    if (record->keycode) {
+        action = action_for_keycode(record->keycode);
+    } else {
+        action = layer_switch_get_action(record->event.key);
+    }
+#else
+    action_t action = layer_switch_get_action(record->event.key);
+#endif
     return is_tap_action(action);
 }
 
