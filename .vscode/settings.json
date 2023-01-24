@@ -13,5 +13,11 @@
         "*.cpp": "cpp",
         "*.hpp": "cpp",
         "xstddef": "c"
-    }
+    },
+    "git.ignoredRepositories": [
+        "chibios",
+        "ugfx",
+        "googletest",
+        "chibios-contrib"
+    ]
 }

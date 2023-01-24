@@ -6,12 +6,27 @@
 #include "features/cmd_tab_switcher.h"
 #include "features/symbol_rolls.h"
 #include "features/layer_lock.h"
+#include "features/hide_and_mute.h"
 
 #ifdef CONSOLE_ENABLE
 #  include "print.h"
 #endif
 
 // extern int retro_tapping_counter;
+
+// Helper for implementing tap vs. long-press keys. Given a tap-hold
+// key event, replaces the hold function with `long_press_keycode`.
+bool process_tap_or_long_press_key(
+    keyrecord_t* record, uint16_t long_press_keycode) {
+  if (record->tap.count == 0) {  // Key is being held.
+    if (record->event.pressed) {
+      tap_code16(long_press_keycode);
+    }
+    return false;  // Skip default handling.
+  }
+  return true;  // Continue default handling.
+}
+
 
 void tap_code16_no_mod(uint16_t code) {
   // Initialize variable holding the binary representation of active modifiers.
@@ -67,184 +82,6 @@ void tap_code_no_mod(uint8_t code) {
   }
 }
 
-// void oopsy_finished(qk_tap_dance_state_t *state, void *user_data) {
-//     if (!state->pressed && !state->interrupted && state->count == 1) {
-//         // KC_MUTE will toggle, instead, lower volume
-//         int i;
-//         for (i = 1; i <= 20; ++i) {
-//             // tap_code(KC_VOLD); // Mute audio (works w/ Boardwalk)
-//             tap_code(KC__VOLDOWN);  // Mute audio (needed for Planck, not sure why)
-//         }
-//     } else if (!state->pressed && !state->interrupted && state->count >= 2) {
-//         // hide window first, then mute
-//         tap_code16(LGUI(KC_H));  // Hide Active Window
-//         // KC_MUTE will toggle, instead, lower volume
-//         int i;
-//         for (i = 1; i <= 20; ++i) {
-//             // tap_code(KC_VOLD); // Mute audio (works w/ Boardwalk)
-//             tap_code(KC__VOLDOWN);  // Mute audio (needed for Planck, not sure why)
-//         }
-//     } else {
-//         layer_on(MOUSE);
-//     }
-// }
-
-void oops_finished(qk_tap_dance_state_t *state, void *user_data) {
-  if (!state->pressed && !state->interrupted && state->count == 1) {
-    // if (MODS_SFT && !(IS_LAYER_ON(HRDWR)) && !(IS_LAYER_ON(AUX))) {
-    //     tap_code16_no_mod(OS_DRKMD_TGL);
-    // } else if (MODS_GUI) {
-    //     // hide works well during command-tab switching (hide & un-hide) and independently (hide)
-    //     tap_code(KC_H);
-    // } else if (MODS_CTRL) {
-    //     tap_code16_no_mod(ZOOM_RESET);
-    // } else if (MODS_ALT) {
-    //     tap_code16_no_mod(ZOOM_RESET_APP);
-    // } else if (IS_LAYER_ON(AUX)) {
-    //     if (MODS_SFT) {
-    //         tap_code16_no_mod(LGUI(KC_S));
-    //     } else {
-    //         tap_code16(LGUI(KC_W));
-    //     }
-    // } else if (IS_LAYER_ON(HRDWR)) {
-    //     if (MODS_SFT) {
-    //         tap_code_no_mod(KC_END);
-    //     } else {
-    //         tap_code(KC_HOME);
-    //     }
-    // } else if (IS_LAYER_ON(FUNCXTR)) {
-    //     tap_code(KC_BTN1);
-    // } else {
-    tap_code(KC_MUTE);
-    // }
-  } else if (!state->pressed && !state->interrupted && state->count >= 2) {
-    // if (MODS_SFT) {
-    //     // nothing
-    // } else if (MODS_GUI) {
-    //     // if native cmd tab is not open this will close the app behind the focused app which is wonky since the first app will get hidden, so only run if cmd+tab is open
-    //     if (is_cmd_tab_active) {
-    //         tap_code(KC_Q);
-    //     }
-    // } else if (MODS_CTRL) {
-    //     // nothing
-    // } else if (MODS_ALT) {
-    //     // nothing
-    // } else if (IS_LAYER_ON(AUX)) {
-    //     // nothing
-    // } else if (IS_LAYER_ON(HRDWR)) {
-    //     // nothing
-    // } else if (IS_LAYER_ON(FUNCXTR)) {
-    //     // nothing
-    // } else {
-    // hide window first, then mute
-    tap_code16(LGUI(KC_H));  // Hide Active Window
-    // KC_MUTE will toggle, instead, lower volume
-    int i;
-    for (i = 1; i <= 20; ++i) {
-      // tap_code(KC_VOLD); // Mute audio (works w/ Boardwalk)
-      tap_code(KC__VOLDOWN);  // Mute audio (needed for Planck, not sure why)
-    }
-    // }
-  } else {
-#if defined EXECUTE_ON_FUNC
-    register_code(KC_EXEC);
-#endif
-    layer_on(FUNC);
-  }
-}
-
-void oops_reset(qk_tap_dance_state_t *state, void *user_data) {
-  // if (state->pressed || state->interrupted) {
-  if (IS_LAYER_ON(FUNC) && !is_layer_locked(FUNC)) {
-    layer_off(FUNC);
-  }
-#if defined EXECUTE_ON_FUNC
-  unregister_code(KC_EXEC);
-#endif
-  // }
-}
-
-void pemdas_finished(qk_tap_dance_state_t *state, void *user_data) {
-  switch (state->count) {
-    case 1:
-      tap_code16(KC_ASTERISK);
-      break;
-    case 2:
-      tap_code(KC_SLASH);
-      break;
-    case 3:
-    case 4:
-    case 5:
-      tap_code16(KC_PLUS);
-      break;
-  }
-}
-
-void doteql_finished(qk_tap_dance_state_t *state, void *user_data) {
-  switch (state->count) {
-    case 1:
-      tap_code(KC_DOT);
-      break;
-    case 2:
-      tap_code(KC_EQL);
-      break;
-    case 3:
-    case 4:
-    case 5:
-      tap_code16(KC_PERC);
-      break;
-  }
-}
-
-void tgl_select(qk_tap_dance_state_t *state, void *user_data) {
-  switch (state->count) {
-    case 1:
-      // right once fixes toggle select on word/line beginnings
-      tap_code(KC_RIGHT);
-      tap_code16(LALT(KC_LEFT));
-      tap_code16(LALT(LSFT(KC_RGHT)));
-      break;
-    case 2:
-      tap_code(KC_RIGHT);
-      tap_code16(LGUI(KC_LEFT));
-      tap_code16(LGUI(LSFT(KC_RGHT)));
-      break;
-    case 3:
-      tap_code(KC_RIGHT);
-      tap_code16(LGUI(KC_UP));
-      tap_code16(LGUI(LSFT(KC_DOWN)));
-      reset_tap_dance(state);
-      break;
-  }
-}
-
-void multi_rst_each(qk_tap_dance_state_t *state, void *user_data) {
-  switch (state->count) {
-    case 1:
-      tap_code16_no_mod(WNDW_CNTR);
-      break;
-    case 2:
-      tap_code16_no_mod(WNDW_RSTR);
-      break;
-  }
-}
-
-void multi_max_each(qk_tap_dance_state_t *state, void *user_data) {
-  switch (state->count) {
-    case 1:
-      tap_code16_no_mod(WNDW_VRT_MAX);
-      break;
-    case 2:
-      tap_code16_no_mod(WNDW_MAX);
-      break;
-  }
-}
-
-// Tap once for Word Select, twice for Line Select, three times for all
-qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_TGL_SEL] = ACTION_TAP_DANCE_FN_ADVANCED(tgl_select, NULL, NULL), [TD_MULTI_MAX] = ACTION_TAP_DANCE_FN_ADVANCED(multi_max_each, NULL, NULL), [TD_MULTI_RSTR] = ACTION_TAP_DANCE_FN_ADVANCED(multi_rst_each, NULL, NULL), [TD_OOPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, oops_finished, oops_reset), [TD_PEMDAS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, pemdas_finished, NULL), [TD_DOTEQL] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, doteql_finished, NULL),
-};
-// end of Tap Dance config
 
 // Custom Shift Keys
 const custom_shift_key_t custom_shift_keys[] = {
@@ -324,79 +161,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (!process_symbol_rolls(keycode, record, SYMBL)) {
     return false;
   }
+  if (!hide_and_mute(keycode, record, LT(FUNC,KC_MUTE))) {
+    return false;
+  }
 
   switch (keycode) {
-    case LT(FUNCXTR, KC_RIGHT):
-    case LT(FUNCXTR, KC_SLSH):
-      if (record->event.pressed) {
-#if defined EXECUTE_ON_FUNC
-        // Only on hold during LT(FUNCXTR)
-        if (!(record->tap.count > 0)) {
-          register_code(KC_EXEC);
-        }
-#endif
-        // return true
-      } else {
-#if defined EXECUTE_ON_FUNC
-        if (!(record->tap.count > 0)) {
-          unregister_code(KC_EXEC);
-        }
-#endif
-      }
-      break;
-    case TLNG_LFT:
-      if (record->event.pressed) {
-        clear_oneshot_mods();
-        if (MODS_LSFT) {
-          tap_code16_no_mod(WNDW_LFT_TTHRD);
-        } else if (MODS_LGUI) {
-          tap_code16_no_mod(WNDW_LFT_HLF);
-        } else if (MODS_LALT) {
-          tap_code16_no_mod(WNDW_LFT_THRD);
-        } else if (MODS_LCTRL) {
-          // tap_code16_no_mod(TLNG_THRW_LFT);
-        } else {
-          tap_code16(WNDW_ALMST_MAX);
-        }
-      }
-      break;
-
-    case TLNG_RGHT:
-      if (record->event.pressed) {
-        clear_oneshot_mods();
-        if (MODS_LSFT) {
-          tap_code16_no_mod(WNDW_RGHT_TTHRD);
-        } else if (MODS_LGUI) {
-          tap_code16_no_mod(WNDW_RGHT_HLF);
-        } else if (MODS_LALT) {
-          tap_code16_no_mod(WNDW_RGNT_THRD);
-        } else if (MODS_LCTRL) {
-          // tap_code16_no_mod();
-        } else {
-          tap_code16(WNDW_ALMST_MAX);
-          tap_code16(WNDW_VRT_MAX);
-        }
-      }
-      break;
-    case TGL_LYT:
-      if (record->event.pressed) {
-        layer_off(HRDWR);
-        if (IS_LAYER_ON(BASE)) {
-          // set_single_persistent_default_layer(QWRTY);
-          // dprint("BASE layer is on prior to switch");
-          layer_off(BASE);
-          layer_on(QWRTY);
-          default_layer_set(QWRTY);
-        } else {
-          // set_single_persistent_default_layer(BASE);
-          // dprint("QWRTY layer is on prior to switch");
-          layer_off(QWRTY);
-          layer_on(BASE);
-          default_layer_set(BASE);
-        }
-      }
-      return false;
-      break;
     case OS_BSPC:
       if (record->event.pressed) {
         register_code(KC_BSPACE);
@@ -438,6 +207,171 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         return false;
       }
       break;
+    case WNDW_LP_MAX:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(WNDW_MAX);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(WNDW_VRT_MAX);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case WNDW_LP_CNTR:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(WNDW_CNTR);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(WNDW_ALMST_MAX);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case WNDW_LP_RST:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(WNDW_RSTR);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(WNDW_LST);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case WNDW_LP_SMLR:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(WNDW_SMLLR);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(WNDW_LFT_HLF);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case WNDW_LP_LGR:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(WNDW_LRGR);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(WNDW_RGHT_HLF);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case MSN_LP_FLLSCRN:  // Mission Control on tap, OS full screen on long press
+        // return process_tap_or_long_press_key(record, OS_FLLSCRN);
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(OS_MSN_CNTRL);
+            } else {
+                // Handle tap release event...
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(OS_FLLSCRN);
+            } else {
+                // Handle hold release event...
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case PRV_SPC_LP:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(OS_PRV_SPC);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(OS_TL_WNDW_L);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case NXT_SPC_LP:
+        if (record->tap.count > 0) {    // Key is being tapped.
+            if (record->event.pressed) {
+                // Handle tap press event...
+                tap_code16(OS_NXT_SPC);
+            }
+        } else {                        // Key is being held.
+            if (record->event.pressed) {
+                // Handle hold press event...
+                tap_code16(OS_TL_WNDW_R);
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case QUOT_LP:
+        return process_tap_or_long_press_key(record, KC_DOUBLE_QUOTE);
+        break;
+    case DOT_LP:
+        return process_tap_or_long_press_key(record, KC_COMM);
+        break;
+    // Cancel Layer Lock on Escape
+    case KC_ESC:
+        if (record->event.pressed) {
+            const uint8_t layer = get_highest_layer(layer_state);
+            if (is_layer_locked(layer)) {
+                layer_lock_off(layer);
+                return false;  // Skip default handling.
+            }
+        }
+        break;
+    case LT(NUMNAV, KC_ESC):
+        if (record->tap.count > 0) {
+            if (record->event.pressed) {
+                const uint8_t layer = get_highest_layer(layer_state);
+                if (is_layer_locked(layer)) {
+                    layer_lock_off(layer);
+                    return false;  // Skip default handling.
+                }
+            }
+        }
+        break;
+    case TGL_SELECT_LP:
+        if (record->tap.count > 0) {
+            if (record->event.pressed) {
+                // right once fixes toggle select on word/line beginnings
+                tap_code(KC_RIGHT);
+                tap_code16(LALT(KC_LEFT));
+                tap_code16(LALT(LSFT(KC_RGHT)));
+            }
+        } else {
+            if (record->event.pressed) {
+                tap_code(KC_RIGHT);
+                tap_code16(LGUI(KC_LEFT));
+                tap_code16(LGUI(LSFT(KC_RGHT)));
+                // select all
+                // tap_code(KC_RIGHT);
+                // tap_code16(LGUI(KC_UP));
+                // tap_code16(LGUI(LSFT(KC_DOWN)));
+            }
+        }
+        return false;  // Skip default handling.
+        break;
   }
   return true;
 }
@@ -452,52 +386,41 @@ void keyboard_post_init_user(void) {
 }
 
 uint32_t layer_state_set_user(uint32_t state) {
-  cmd_tab_switcher_layer_state(state);
-  oneshot_mods_layer_state(state);
+    cmd_tab_switcher_layer_state(state);
+    oneshot_mods_layer_state(state);
 
-  state = update_tri_layer_state(state, NUMNAV, AUX, OS);
+    state = update_tri_layer_state(state, NUMNAV, AUX, OS);
+  
+      // Use `static` variable to remember the previous status.
+    static bool func_on = false;
 
-  switch (get_highest_layer(state)) {
-    case BASE:
-#if defined EXECUTE_ON_FUNC
-      unregister_code(KC_EXEC);
-#endif
-#ifdef KEY_LOCK_ENABLE
-      cancel_key_lock();
-#endif
-      break;
-    case FUNC:
-    case FUNCXTR:
-// don't unregister_code(KC_EXEC) on this layer
-#ifdef KEY_LOCK_ENABLE
-      cancel_key_lock();
-#endif
-      break;
-    default:  //  for any other layers
-#if defined EXECUTE_ON_FUNC
-      unregister_code(KC_EXEC);
-#endif
-#ifdef KEY_LOCK_ENABLE
-      cancel_key_lock();
-#endif
-      break;
-  }
+    if (func_on != (IS_LAYER_ON_STATE(state, FUNC) || (IS_LAYER_ON_STATE(state, FUNCXTR)))) {
+        func_on = !func_on;
+        if (func_on) {
+            // Just entered one of the FUNC layers.
+            #if defined EXECUTE_ON_FUNC
+            register_code(KC_EXEC);
+            #endif
+        } else {
+            // Just exited the one of FUNC layers.
+            #if defined EXECUTE_ON_FUNC
+            unregister_code(KC_EXEC);
+            #endif
+        }
+    }
 
-  return state;
+    // always call cancel_key_lock()
+    #ifdef KEY_LOCK_ENABLE
+    cancel_key_lock();
+    #endif
+
+    return state;
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
     case LT(HRDWR, KC_SPC):
       return 350;
-    case TD(TD_TGL_SEL):
-    case TD(TD_PEMDAS):
-    case TD(TD_DOTEQL):
-    case TD(TD_OOPS):
-      return 225;
-    case TD(TD_MULTI_MAX):
-    case TD(TD_MULTI_RSTR):
-      return 300;
     default:
       return TAPPING_TERM;
   }
