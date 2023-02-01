@@ -161,7 +161,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (!process_symbol_rolls(keycode, record, SYMBL)) {
     return false;
   }
-  if (!hide_and_mute(keycode, record, LT(FUNC,KC_MUTE))) {
+  if (!hide_and_mute(keycode, record, MUTE_HIDE)) {
     return false;
   }
 
@@ -230,7 +230,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {                        // Key is being held.
             if (record->event.pressed) {
                 // Handle hold press event...
-                tap_code16(WNDW_ALMST_MAX);
+                tap_code16(WNDW_LST);
             }
         }
         return false;  // Skip default handling.
@@ -244,7 +244,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {                        // Key is being held.
             if (record->event.pressed) {
                 // Handle hold press event...
-                tap_code16(WNDW_LST);
+                tap_code16(WNDW_ALMST_MAX);
             }
         }
         return false;  // Skip default handling.
@@ -378,10 +378,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 void keyboard_post_init_user(void) {
 #ifdef QWERTY_BASE
-  // Call the post init code.
-  layer_off(BASE);
-  layer_on(QWRTY);
-  default_layer_set(QWRTY);
+// Call the post init code.
+layer_off(BASE);
+layer_on(QWRTY);
+default_layer_set(QWRTY);
 #endif
 }
 
@@ -390,11 +390,11 @@ uint32_t layer_state_set_user(uint32_t state) {
     oneshot_mods_layer_state(state);
 
     state = update_tri_layer_state(state, NUMNAV, AUX, OS);
+    state = update_tri_layer_state(state, HRDWR, SYMBL, FUNC);
   
       // Use `static` variable to remember the previous status.
     static bool func_on = false;
-
-    if (func_on != (IS_LAYER_ON_STATE(state, FUNC) || (IS_LAYER_ON_STATE(state, FUNCXTR)))) {
+    if (func_on != IS_LAYER_ON_STATE(state, FUNC)) {
         func_on = !func_on;
         if (func_on) {
             // Just entered one of the FUNC layers.
@@ -466,8 +466,8 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     case RGUI_T(KC_LEFT):
     case RALT_T(KC_DOWN):
     case RCTL_T(KC_UP):
-    case LT(FUNCXTR, KC_RIGHT):
-    // case LT(FUNCXTR, KC_SLASH):
+    case LT(NUMPAD, KC_RIGHT):
+    case LT(NUMPAD, KC_SLASH): // why not
     case LT(HRDWR, KC_SPC):
       // case LT(MOUSE, KC_MINUS):
       return false;

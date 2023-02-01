@@ -144,13 +144,13 @@
 #define OS_NXT_TAB LCTL(KC_TAB)             // Next Tab
 #define OS_PRV_TAB LSFT(LCTL(KC_TAB))       // Previous Tab
 // custom (non-default) in OS
-#define OS_SIRI HYPR(KC_S)                   // Siri
-#define OS_LNCHPD HYPR(KC_L)                 // Launchpad
-#define OS_SDBR HYPR(KC_N)                   // Sidebar
-#define OS_DRKMD_TGL HYPR(KC_D)              // Toggle Dark Mode via AppleScript
-#define OS_MAIL HYPR(KC_J)                   // Show Mail via Service
-#define OS_WEB HYPR(KC_W)                    // Show Web Browser via Service
-// #define OS_CODE HYPR(KC_C)                // Show VSCode via Service
+#define OS_SIRI HYPR(KC_S)       // Siri
+#define OS_LNCHPD HYPR(KC_L)     // Launchpad
+#define OS_SDBR HYPR(KC_N)       // Sidebar
+#define OS_DRKMD_TGL HYPR(KC_D)  // Toggle Dark Mode via AppleScript
+#define OS_MAIL HYPR(KC_J)       // Show Mail via Service
+#define OS_WEB HYPR(KC_W)        // Show Web Browser via Service
+// #define OS_CODE HYPR(KC_C)                   // Show VSCode via Service
 #define OS_WEB_DEV HYPR(KC_F)                // Show Firefox Developer Edition via Service
 #define OS_FLLSCRN LCTL(LGUI(KC_F))          // Fullscreen (green button)
 #define OS_MIN LGUI(KC_M)                    // Minimize (yellow button)
@@ -187,9 +187,9 @@
 #define NXT_SPC_LP LT(0, KC_8)
 #define TGL_SELECT_LP LT(0, KC_9)
 
-enum layers { BASE, QWRTY, NUMNAV, SYMBL, AUX, HRDWR, FUNC, FUNCXTR, OS };
+enum layers { BASE, QWRTY, NUMNAV, SYMBL, AUX, HRDWR, FUNC, NUMPAD, OS };
 
-enum custom_keycodes { CMD_TAB_PRV = SAFE_RANGE, TGL_LYT, CMD_TAB_NXT, DISP_FDIM, DISP_FBRI, XOSM_LSFT, XOSM_LGUI, XOSM_LALT, XOSM_LCTL, XOSM_RSFT, XOSM_RGUI, XOSM_RALT, XOSM_RCTL, WNDW_FSCRN, OS_BSPC, OS_DEL, OS_BCK_FWD, LLOCK, ENC_BTN, SHAKE_MOUSE, NO_VOL };
+enum custom_keycodes { CMD_TAB_PRV = SAFE_RANGE, TGL_LYT, CMD_TAB_NXT, DISP_FDIM, DISP_FBRI, XOSM_LSFT, XOSM_LGUI, XOSM_LALT, XOSM_LCTL, XOSM_RSFT, XOSM_RGUI, XOSM_RALT, XOSM_RCTL, WNDW_FSCRN, OS_BSPC, OS_DEL, OS_BCK_FWD, LLOCK, ENC_BTN, SHAKE_MOUSE, NO_VOL, MUTE_HIDE };
 
 bool process_tap_or_long_press_key(keyrecord_t* record, uint16_t long_press_keycode);
 void tap_code_no_mod(uint8_t);

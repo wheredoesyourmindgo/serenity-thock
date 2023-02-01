@@ -19,5 +19,6 @@
         "ugfx",
         "googletest",
         "chibios-contrib"
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }
