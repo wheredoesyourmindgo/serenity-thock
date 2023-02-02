@@ -20,5 +20,6 @@
         "googletest",
         "chibios-contrib"
     ],
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/lib/googletest"
 }
