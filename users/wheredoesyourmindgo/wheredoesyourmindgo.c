@@ -6,7 +6,7 @@
 #include "features/cmd_tab_switcher.h"
 #include "features/symbol_rolls.h"
 #include "features/layer_lock.h"
-#include "features/hide_and_mute.h"
+// #include "features/hide_and_mute.h"
 
 #ifdef CONSOLE_ENABLE
 #  include "print.h"
@@ -159,9 +159,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return false;
   }
   if (!process_symbol_rolls(keycode, record, SYMBL)) {
-    return false;
-  }
-  if (!hide_and_mute(keycode, record, MUTE_HIDE)) {
     return false;
   }
 
@@ -368,6 +365,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 // tap_code(KC_RIGHT);
                 // tap_code16(LGUI(KC_UP));
                 // tap_code16(LGUI(LSFT(KC_DOWN)));
+            }
+        }
+        return false;  // Skip default handling.
+        break;
+    case MUTE_LP_HIDE:
+        if (record->tap.count > 0) {
+            if (record->event.pressed) {
+                // right once fixes toggle select on word/line beginnings
+                tap_code16(KC_MUTE);
+            }
+        } else {
+            if (record->event.pressed) {
+                tap_code16(LGUI(KC_H));  // Hide Active Window
             }
         }
         return false;  // Skip default handling.

@@ -34,7 +34,6 @@ SRC += features/magic_shift.c
 SRC += features/cmd_tab_switcher.c
 SRC += features/symbol_rolls.c
 SRC += features/layer_lock.c
-SRC += features/hide_and_mute.c
 
 ifeq ($(strip $(EXECUTE_ON_FUNC)), yes)
   OPT_DEFS += -DEXECUTE_ON_FUNC

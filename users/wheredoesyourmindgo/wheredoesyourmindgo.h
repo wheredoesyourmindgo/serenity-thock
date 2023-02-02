@@ -186,6 +186,7 @@
 #define PRV_SPC_LP LT(0, KC_7)
 #define NXT_SPC_LP LT(0, KC_8)
 #define TGL_SELECT_LP LT(0, KC_9)
+#define MUTE_LP_HIDE LT(0, KC_0)
 
 enum layers { BASE, QWRTY, NUMNAV, SYMBL, AUX, HRDWR, FUNC, NUMPAD, OS };
 
