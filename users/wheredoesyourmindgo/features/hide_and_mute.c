@@ -8,17 +8,18 @@ bool hide_and_mute(uint16_t keycode, keyrecord_t* record, uint16_t hide_and_mute
     if (record->event.pressed) {
         static bool tapped = false;
         static uint16_t tap_timer = 0;
+        // KC_MUTE will toggle
+        tap_code16(KC_MUTE);  // Hide Active Window
         if (keycode == hide_and_mute_keycode) {
             if (tapped && !timer_expired(record->event.time, tap_timer)) {
                 // The key was double tapped.
                 clear_mods();  // If needed, clear the mods.
                 // hide window first, then mute
                 tap_code16(LGUI(KC_H));  // Hide Active Window
-                // KC_MUTE will toggle, additionally lower volume
-                int i;
-                for (i = 1; i <= 20; ++i) {
-                    tap_code(KC_VOLD);
-                }
+                // int i;
+                // for (i = 1; i <= 20; ++i) {
+                //     tap_code(KC_VOLD);
+                // }
             }
             tapped = true;
             tap_timer = record->event.time + TAPPING_TERM;
