@@ -138,12 +138,28 @@ uint8_t NUM_CUSTOM_SHIFT_KEYS = sizeof(custom_shift_keys) / sizeof(custom_shift_
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (keycode == KC_BSPC) {
         if (record->event.pressed) {
-          if (MODS_SFT && MODS_GUI) {
-            tap_code16_no_mod(LCTL(KC_K));  // Gui shift backspace becomes delete line forward
-            return false;            // don't continue with custom shift keycodes below
-          }
+            if (MODS_SFT && MODS_GUI) {
+                tap_code16_no_mod(LCTL(KC_K));  // Gui shift backspace becomes delete line forward
+                return false;            // don't continue with custom shift keycodes below
+            }
+        } else {
+            if (ONESHOT_MODS_ACTIVE) {
+                clear_oneshot_mods();
+            }
         }
       }
+        // if (keycode == KC_DELETE) {
+        //     if (record->event.pressed) {
+        //     if (MODS_GUI) {
+        //         tap_code16_no_mod(LCTL(KC_K));  // Gui delete becomes delete line forward
+        //         return false;            // don't continue with custom shift keycodes below
+        //     }
+        //     } else {
+        //         if (ONESHOT_MODS_ACTIVE) {
+        //             clear_oneshot_mods();
+        //         }
+        //     }
+        // }
       // don't activate on qwerty layer
       if (!IS_LAYER_ON(QWRTY)) {
         // if (!process_custom_gui_keys(keycode, record)) {
