@@ -7,6 +7,7 @@
 #include "features/symbol_rolls.h"
 #include "features/mash_arrows.h"
 #include "features/layer_lock.h"
+#include "print.h"
 // #include "features/hide_and_mute.h"
 
 #ifdef CONSOLE_ENABLE
@@ -180,6 +181,7 @@ uint8_t NUM_CUSTOM_SHIFT_KEYS = sizeof(custom_shift_keys) / sizeof(custom_shift_
 
 /* Macros */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  //   dprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
   if (keycode == KC_BSPC) {
     if (record->event.pressed) {
       if (MODS_SFT && MODS_GUI) {
@@ -206,13 +208,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   // }
   // don't activate on qwerty layer
   if (!IS_LAYER_ON(QWRTY)) {
-    // if (!process_custom_gui_keys(keycode, record)) {
-    //   return false;
-    // }
     if (!process_custom_shift_keys(keycode, record)) {
       return false;
     }
+    // if (!process_custom_gui_keys(keycode, record)) {
+    //   return false;
+    // }
   }
+
   if (!process_layer_lock(keycode, record, LLOCK)) {
     return false;
   }
@@ -235,6 +238,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   switch (keycode) {
+    case TGL_LYT:
+      if (record->event.pressed) {
+        layer_off(HRDWR);
+        if (IS_LAYER_ON(BASE)) {
+          // set_single_persistent_default_layer(QWRTY);
+          // dprint("BASE layer is on prior to switch");
+          layer_off(BASE);
+          layer_on(QWRTY);
+          default_layer_set(QWRTY);
+        } else {
+          // set_single_persistent_default_layer(BASE);
+          // dprint("QWRTY layer is on prior to switch");
+          layer_off(QWRTY);
+          layer_on(BASE);
+          default_layer_set(BASE);
+        }
+      }
+      return false;
+      break;
     case LSFT(LGUI(KC_BSPC)):
       if (record->event.pressed) {
         tap_code16(LCTL(KC_K));  // Gui shift backspace becomes delete line forward
@@ -262,23 +284,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         } else {
           tap_code16(LGUI(KC_LBRACKET));
         }
-      }
-      break;
-    case ENC_BTN:
-      if (record->event.pressed) {
-        // if (IS_LAYER_ON(HIGHER) || MODS_GUI) {
-        if (MODS_SFT) {
-          tap_code16_no_mod(OS_DRKMD_TGL);
-        } else if (MODS_CTRL) {
-          tap_code16_no_mod(ZOOM_RESET);
-        } else if (MODS_ALT) {
-          tap_code16_no_mod(ZOOM_RESET_APP);
-        } else if (MODS_GUI) {
-          tap_code16(KC_H);  // command-h
-        } else {
-          tap_code(KC_MUTE);
-        }
-        return false;
       }
       break;
     case WNDW_LP_MAX:
@@ -414,17 +419,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
       }
       break;
-    // case LT(NUMNAV, KC_ESC):
-    // if (record->tap.count > 0) {
-    //     if (record->event.pressed) {
-    //         const uint8_t layer = get_highest_layer(layer_state);
-    //         if (is_layer_locked(layer)) {
-    //             layer_lock_off(layer);
-    //             return false;  // Skip default handling.
-    //         }
-    //     }
-    // }
-    // break;
     case TGL_SELECT_LP:
       if (record->tap.count > 0) {
         if (record->event.pressed) {
