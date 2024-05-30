@@ -19,112 +19,113 @@
 // Helper for implementing tap vs. long-press keys. Given a tap-hold
 // key event, replaces the hold function with `long_press_keycode`.
 bool process_tap_or_long_press_key(keyrecord_t *record, uint16_t long_press_keycode) {
-  if (record->tap.count == 0) {  // Key is being held.
-    if (record->event.pressed) {
-      tap_code16(long_press_keycode);
+    if (record->tap.count == 0) { // Key is being held.
+        if (record->event.pressed) {
+            tap_code16(long_press_keycode);
+        }
+        return false; // Skip default handling.
     }
-    return false;  // Skip default handling.
-  }
-  return true;  // Continue default handling.
+    return true; // Continue default handling.
 }
 
 void tap_code16_no_mod(uint16_t code) {
-  // Initialize variable holding the binary representation of active modifiers.
-  uint8_t mod_state;
-  uint8_t w_mod_state;
-  uint8_t o_mod_state;
-  // Store the current modifier state in the variable for later reference
-  mod_state   = get_mods();
-  w_mod_state = get_weak_mods();
-  o_mod_state = get_oneshot_mods();
-  // clear_oneshot_mods();
-  if (mod_state || w_mod_state || o_mod_state) {
-    // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
-    del_mods(mod_state);
-    del_weak_mods(w_mod_state);
-    del_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-    tap_code16(code);
-    // Reapplying modifier state so that the held shift key(s) still work even after having sent the tap code.
-    add_mods(mod_state);
-    add_weak_mods(w_mod_state);
-    set_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-  } else {
-    tap_code16(code);
-  }
+    // Initialize variable holding the binary representation of active modifiers.
+    uint8_t mod_state;
+    uint8_t w_mod_state;
+    uint8_t o_mod_state;
+    // Store the current modifier state in the variable for later reference
+    mod_state   = get_mods();
+    w_mod_state = get_weak_mods();
+    o_mod_state = get_oneshot_mods();
+    // clear_oneshot_mods();
+    if (mod_state || w_mod_state || o_mod_state) {
+        // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
+        del_mods(mod_state);
+        del_weak_mods(w_mod_state);
+        del_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+        tap_code16(code);
+        // Reapplying modifier state so that the held shift key(s) still work even after having sent the tap code.
+        add_mods(mod_state);
+        add_weak_mods(w_mod_state);
+        set_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+    } else {
+        tap_code16(code);
+    }
 }
 
 void tap_code_no_mod(uint8_t code) {
-  // Initialize variable holding the binary representation of active modifiers.
-  uint8_t mod_state;
-  uint8_t w_mod_state;
-  uint8_t o_mod_state;
-  // Store the current modifier state in the variable for later reference
-  mod_state   = get_mods();
-  w_mod_state = get_weak_mods();
-  o_mod_state = get_oneshot_mods();
-  // clear_oneshot_mods();
-  if (mod_state || w_mod_state || o_mod_state) {
-    // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
-    del_mods(mod_state);
-    del_weak_mods(w_mod_state);
-    del_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-    tap_code16(code);
-    // Reapplying modifier state so that the held shift key(s) still work even after having sent the tap code.
-    add_mods(mod_state);
-    add_weak_mods(w_mod_state);
-    set_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-  } else {
-    tap_code(code);
-  }
+    // Initialize variable holding the binary representation of active modifiers.
+    uint8_t mod_state;
+    uint8_t w_mod_state;
+    uint8_t o_mod_state;
+    // Store the current modifier state in the variable for later reference
+    mod_state   = get_mods();
+    w_mod_state = get_weak_mods();
+    o_mod_state = get_oneshot_mods();
+    // clear_oneshot_mods();
+    if (mod_state || w_mod_state || o_mod_state) {
+        // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
+        del_mods(mod_state);
+        del_weak_mods(w_mod_state);
+        del_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+        tap_code16(code);
+        // Reapplying modifier state so that the held shift key(s) still work even after having sent the tap code.
+        add_mods(mod_state);
+        add_weak_mods(w_mod_state);
+        set_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+    } else {
+        tap_code(code);
+    }
 }
 
 void tap_code16_unset_mod(uint16_t code) {
-  // Initialize variable holding the binary representation of active modifiers.
-  uint8_t mod_state;
-  uint8_t w_mod_state;
-  uint8_t o_mod_state;
-  // Store the current modifier state in the variable for later reference
-  mod_state   = get_mods();
-  w_mod_state = get_weak_mods();
-  o_mod_state = get_oneshot_mods();
-  // clear_oneshot_mods();
-  if (mod_state || w_mod_state || o_mod_state) {
-    // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
-    del_mods(mod_state);
-    del_weak_mods(w_mod_state);
-    del_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-    tap_code16(code);
-  } else {
-    tap_code16(code);
-  }
+    // Initialize variable holding the binary representation of active modifiers.
+    uint8_t mod_state;
+    uint8_t w_mod_state;
+    uint8_t o_mod_state;
+    // Store the current modifier state in the variable for later reference
+    mod_state   = get_mods();
+    w_mod_state = get_weak_mods();
+    o_mod_state = get_oneshot_mods();
+    // clear_oneshot_mods();
+    if (mod_state || w_mod_state || o_mod_state) {
+        // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
+        del_mods(mod_state);
+        del_weak_mods(w_mod_state);
+        del_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+        tap_code16(code);
+    } else {
+        tap_code16(code);
+    }
 }
 
 void tap_code_unset_mod(uint8_t code) {
-  // Initialize variable holding the binary representation of active modifiers.
-  uint8_t mod_state;
-  uint8_t w_mod_state;
-  uint8_t o_mod_state;
-  // Store the current modifier state in the variable for later reference
-  mod_state   = get_mods();
-  w_mod_state = get_weak_mods();
-  o_mod_state = get_oneshot_mods();
-  // clear_oneshot_mods();
-  if (mod_state || w_mod_state || o_mod_state) {
-    // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
-    del_mods(mod_state);
-    del_weak_mods(w_mod_state);
-    del_oneshot_mods(o_mod_state);
-    send_keyboard_report();
-    tap_code16(code);
-  } else {
-    tap_code(code);
-  }
+    // Initialize variable holding the binary representation of active modifiers.
+    uint8_t mod_state;
+    uint8_t w_mod_state;
+    uint8_t o_mod_state;
+    // Store the current modifier state in the variable for later reference
+    mod_state   = get_mods();
+    w_mod_state = get_weak_mods();
+    o_mod_state = get_oneshot_mods();
+    // clear_oneshot_mods();
+    if (mod_state || w_mod_state || o_mod_state) {
+        // First temporarily canceling both shifts so that shift isn't applied to the keycode/shortcut
+        del_mods(mod_state);
+        del_weak_mods(w_mod_state);
+        del_oneshot_mods(o_mod_state);
+        send_keyboard_report();
+        tap_code16(code);
+    } else {
+        tap_code(code);
+    }
 }
+
 
 // Custom Shift Keys
 const custom_shift_key_t custom_shift_keys[] = {
@@ -133,18 +134,18 @@ const custom_shift_key_t custom_shift_keys[] = {
     //   {KC_8, KC_LEFT_PAREN}, // Shift 8 is (
     //   {KC_9, KC_RIGHT_PAREN}, // Shift 9 is )
     //   {KC_0, KC_ASTERISK}, // Shift 0 is *
-    {KC_BSPACE, KC_DELETE}  // Shift Backspace is delete forward
-                            // {KC_BSPACE, LALT(KC_BSPACE)},  // Shift Backspace becomes delete previous word
-                            // {KC_DELETE, LALT(KC_DELETE)},  // Shift Delete is delete previous word
-                            //   {KC_F6, KC_F16}, // Shift F-* is +10 F-*
-                            //   {KC_F7, KC_F17},
-                            //   {KC_F8, KC_F18},
-                            //   {KC_F9, KC_F19},
-                            //   {KC_F10, KC_F20},
-                            //   {KC_F11, KC_F21},
-                            //   {KC_F12, KC_F22},
-                            //   {KC_F13, KC_F23},
-                            //   {KC_F14, KC_F24},
+    //   {KC_BACKSPACE, LALT(KC_BACKSPACE)}, // Shift Backspace is delete previous word
+    //   {KC_DELETE, LALT(KC_DELETE)}, // Shift Delete is delete previous word
+    {KC_BSPACE, KC_DELETE} // Shift Backspace is delete forward
+    //   {KC_F6, KC_F16}, // Shift F-* is +10 F-*
+    //   {KC_F7, KC_F17},
+    //   {KC_F8, KC_F18},
+    //   {KC_F9, KC_F19},
+    //   {KC_F10, KC_F20},
+    //   {KC_F11, KC_F21},
+    //   {KC_F12, KC_F22},
+    //   {KC_F13, KC_F23},
+    //   {KC_F14, KC_F24},
 };
 uint8_t NUM_CUSTOM_SHIFT_KEYS = sizeof(custom_shift_keys) / sizeof(custom_shift_key_t);
 
@@ -181,19 +182,18 @@ uint8_t NUM_CUSTOM_SHIFT_KEYS = sizeof(custom_shift_keys) / sizeof(custom_shift_
 
 /* Macros */
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  //   dprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
-  if (keycode == KC_BSPC) {
-    if (record->event.pressed) {
-      if (MODS_SFT && MODS_GUI) {
-        tap_code16_no_mod(LCTL(KC_K));  // Gui shift backspace becomes delete line forward
-        return false;                   // don't continue with custom shift keycodes below
-      }
-    } else {
-      if (ONESHOT_MODS_ACTIVE) {
-        clear_oneshot_mods();
-      }
+    if (keycode == KC_BSPACE) {
+        if (record->event.pressed) {
+            if (MODS_SFT && MODS_GUI) {
+                tap_code16_no_mod(LCTL(KC_K)); // Gui shift backspace becomes delete line forward
+                return false;                  // don't continue with custom shift keycodes below
+            }
+        } else {
+            if (ONESHOT_MODS_ACTIVE) {
+                clear_oneshot_mods();
+            }
+        }
     }
-  }
   // if (keycode == KC_DELETE) {
   //     if (record->event.pressed) {
   //     if (MODS_GUI) {
@@ -206,16 +206,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   //         }
   //     }
   // }
-  // don't activate on qwerty layer
-//   if (!IS_LAYER_ON(QWRTY)) {
-    if (!process_custom_shift_keys(keycode, record)) {
-      return false;
+    // don't activate on qwerty layer
+    if (!IS_LAYER_ON(QWRTY)) {
+        // if (!process_custom_gui_keys(keycode, record)) { return false; }
+        if (!process_custom_shift_keys(keycode, record)) {
+            return false;
+        }
     }
-//    // if (!process_custom_gui_keys(keycode, record)) {
-  //  //   return false;
-    //// }
-//   }
-
   if (!process_layer_lock(keycode, record, LLOCK)) {
     return false;
   }
@@ -238,257 +235,270 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   }
 
   switch (keycode) {
-    // case TGL_LYT:
-    //   if (record->event.pressed) {
-    //     layer_off(HRDWR);
-    //     if (IS_LAYER_ON(BASE)) {
-    //       // set_single_persistent_default_layer(QWRTY);
-    //       // dprint("BASE layer is on prior to switch");
-    //       layer_off(BASE);
-    //       layer_on(QWRTY);
-    //       default_layer_set(QWRTY);
-    //     } else {
-    //       // set_single_persistent_default_layer(BASE);
-    //       // dprint("QWRTY layer is on prior to switch");
-    //       layer_off(QWRTY);
-    //       layer_on(BASE);
-    //       default_layer_set(BASE);
-    //     }
-    //   }
-    //   return false;
-    //   break;
-    case LSFT(LGUI(KC_BSPC)):
-      if (record->event.pressed) {
-        tap_code16(LCTL(KC_K));  // Gui shift backspace becomes delete line forward
-      }
-      break;
-    case OS_BSPC:
-      if (record->event.pressed) {
-        register_code(KC_BSPACE);
-      } else {
-        unregister_code(KC_BSPACE);
-      }
-      break;
-    case OS_DEL:
-      if (record->event.pressed) {
-        register_code(KC_DELETE);
-      } else {
-        unregister_code(KC_DELETE);
-      }
-      break;
-    case OS_BCK_FWD:
-      if (record->event.pressed) {
-        clear_oneshot_mods();
-        if (MODS_SFT) {
-          tap_code16_no_mod(LGUI(KC_RBRACKET));
-        } else {
-          tap_code16(LGUI(KC_LBRACKET));
-        }
-      }
-      break;
-    case WNDW_LP_MAX:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(WNDW_MAX);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(WNDW_VRT_MAX);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case WNDW_LP_CNTR:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(WNDW_CNTR);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(WNDW_LST);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case WNDW_LP_RST:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(WNDW_RSTR);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(WNDW_ALMST_MAX);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case WNDW_LP_SMLR:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(WNDW_SMLLR);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(WNDW_LFT_HLF);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case WNDW_LP_LGR:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(WNDW_LRGR);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(WNDW_RGHT_HLF);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case MSN_LP_FLLSCRN:  // Mission Control on tap, OS full screen on long press
-      // return process_tap_or_long_press_key(record, OS_FLLSCRN);
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(OS_MSN_CNTRL);
-        } else {
-          // Handle tap release event...
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(OS_FLLSCRN);
-        } else {
-          // Handle hold release event...
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case PRV_SPC_LP:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(OS_PRV_SPC);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(OS_TL_WNDW_L);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case NXT_SPC_LP:
-      if (record->tap.count > 0) {  // Key is being tapped.
-        if (record->event.pressed) {
-          // Handle tap press event...
-          tap_code16(OS_NXT_SPC);
-        }
-      } else {  // Key is being held.
-        if (record->event.pressed) {
-          // Handle hold press event...
-          tap_code16(OS_TL_WNDW_R);
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case QUOT_LP:
-      return process_tap_or_long_press_key(record, KC_DOUBLE_QUOTE);
-      break;
-    case DOT_LP:
-      return process_tap_or_long_press_key(record, KC_COMM);
-      break;
-    // Cancel Layer Lock on Escape
-    case KC_ESC:
-      if (record->event.pressed) {
-        const uint8_t layer = get_highest_layer(layer_state);
-        if (is_layer_locked(layer)) {
-          layer_lock_off(layer);
-          return false;  // Skip default handling.
-        }
-      }
-      break;
-    case TGL_SELECT_LP:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          // right once fixes toggle select on word/line beginnings
-          tap_code(KC_RIGHT);
-          tap_code16(LALT(KC_LEFT));
-          tap_code16(LALT(LSFT(KC_RGHT)));
-        }
-      } else {
-        if (record->event.pressed) {
-          tap_code(KC_RIGHT);
-          tap_code16(LGUI(KC_LEFT));
-          tap_code16(LGUI(LSFT(KC_RGHT)));
-          // select all
-          // tap_code(KC_RIGHT);
-          // tap_code16(LGUI(KC_UP));
-          // tap_code16(LGUI(LSFT(KC_DOWN)));
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-    case MUTE_LP_HIDE:
-      if (record->tap.count > 0) {
-        if (record->event.pressed) {
-          // right once fixes toggle select on word/line beginnings
-          tap_code16(KC_MUTE);
-        }
-      } else {
-        if (record->event.pressed) {
-          tap_code16(LGUI(KC_H));  // Hide Active Window
-        }
-      }
-      return false;  // Skip default handling.
-      break;
-  }
-  return true;
+    case TGL_LYT:
+            if (record->event.pressed) {
+                layer_off(HRDWR);
+                if (IS_LAYER_ON(BASE)) {
+                    // set_single_persistent_default_layer(QWRTY);
+                    // dprint("BASE layer is on prior to switch");
+                    layer_off(BASE);
+                    layer_on(QWRTY);
+                    default_layer_set(QWRTY);
+                } else {
+                    // set_single_persistent_default_layer(BASE);
+                    // dprint("QWRTY layer is on prior to switch");
+                    layer_off(QWRTY);
+                    layer_on(BASE);
+                    default_layer_set(BASE);
+                }
+            }
+            return false;
+            break;
+        case LSFT(LGUI(KC_BSPC)):
+            if (record->event.pressed) {
+                tap_code16(LCTL(KC_K)); // Gui shift backspace becomes delete line forward
+            }
+            break;
+        case OS_BSPC:
+            if (record->event.pressed) {
+                register_code(KC_BSPACE);
+            } else {
+                unregister_code(KC_BSPACE);
+            }
+            break;
+        case OS_DEL:
+            if (record->event.pressed) {
+                register_code(KC_DELETE);
+            } else {
+                unregister_code(KC_DELETE);
+            }
+            break;
+        case WNDW_LP_MAX:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_VRT_MAX);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_MAX);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case WNDW_LP_CNTR:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_ALMST_MAX);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_CNTR);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case WNDW_LP_RST:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_LST);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_RSTR);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case WNDW_LP_SMLR:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_SMLLR);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_LFT_HLF);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case WNDW_LP_LGR:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_LRGR);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_RGHT_HLF);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case MSN_LP_FLLSCRN: // Mission Control on tap, OS full screen on long press
+            // return process_tap_or_long_press_key(record, OS_FLLSCRN);
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(OS_MSN_CNTRL);
+                } else {
+                    // Handle tap release event...
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(OS_FLLSCRN);
+                } else {
+                    // Handle hold release event...
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case PRV_SPC_LP:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(OS_PRV_SPC);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(OS_TL_WNDW_L);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case NXT_SPC_LP:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(OS_NXT_SPC);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(OS_TL_WNDW_R);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case QUOT_LP:
+            return process_tap_or_long_press_key(record, KC_DOUBLE_QUOTE);
+            break;
+        case DOT_LP:
+            return process_tap_or_long_press_key(record, KC_COMM);
+            break;
+        // Cancel Layer Lock on Escape
+        case KC_ESC:
+            if (record->event.pressed) {
+                const uint8_t layer = get_highest_layer(layer_state);
+                if (is_layer_locked(layer)) {
+                    layer_lock_off(layer);
+                    return false; // Skip default handling.
+                }
+            }
+            break;
+        case MT(MOD_LCTL, KC_ESC):
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    const uint8_t layer = get_highest_layer(layer_state);
+                    if (is_layer_locked(layer)) {
+                        layer_lock_off(layer);
+                        return false; // Skip default handling.
+                    }
+                }
+            }
+            break;
+        // case LT(NUMNAV, KC_ESC):
+        //     if (record->tap.count > 0) {
+        //         if (record->event.pressed) {
+        //             const uint8_t layer = get_highest_layer(layer_state);
+        //             if (is_layer_locked(layer)) {
+        //                 layer_lock_off(layer);
+        //                 return false;  // Skip default handling.
+        //             }
+        //         }
+        //     }
+        //     break;
+        case TGL_SELECT_LP:
+            if (record->tap.count > 0) {
+                if (record->event.pressed) {
+                    // right once fixes toggle select on word/line beginnings
+                    tap_code(KC_RIGHT);
+                    tap_code16(LALT(KC_LEFT));
+                    tap_code16(LALT(LSFT(KC_RGHT)));
+                }
+            } else {
+                if (record->event.pressed) {
+                    tap_code(KC_RIGHT);
+                    tap_code16(LGUI(KC_LEFT));
+                    tap_code16(LGUI(LSFT(KC_RGHT)));
+                    // select all
+                    // tap_code(KC_RIGHT);
+                    // tap_code16(LGUI(KC_UP));
+                    // tap_code16(LGUI(LSFT(KC_DOWN)));
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        // This was used with 3 button macro pad, bn003
+        // case LP_TAB:
+        //     if (record->tap.count > 0) {
+        //         if (record->event.pressed) {
+        //             tap_code16(LGUI(KC_T));
+        //         }
+        //     } else {
+        //         if (record->event.pressed) {
+        //             tap_code16(LGUI(KC_W));
+        //         }
+        //     }
+        //     return false; // Skip default handling.
+        //     break;
+    }
+    return true;
 }
 
-// void keyboard_post_init_user(void) {
-// #ifdef QWERTY_BASE
-//   // Call the post init code.
-//   layer_off(BASE);
-//   layer_on(QWRTY);
-//   default_layer_set(QWRTY);
-// #endif
-// }
+void keyboard_post_init_user(void) {
+#ifdef QWERTY_BASE
+    // Call the post init code.
+    layer_off(BASE);
+    layer_on(QWRTY);
+    default_layer_set(QWRTY);
+#endif
+}
 
 uint32_t layer_state_set_user(uint32_t state) {
-  cmd_tab_switcher_layer_state(state);
-  oneshot_mods_layer_state(state);
+    cmd_tab_switcher_layer_state(state);
+    oneshot_mods_layer_state(state);
 
-  state = update_tri_layer_state(state, NUMNAV, SYMBL, OS);
-  state = update_tri_layer_state(state, HRDWR, AUX, FUNC);
+    state = update_tri_layer_state(state, NUMNAV, SYMBL, OS);
+    state = update_tri_layer_state(state, HRDWR, AUX, FUNC);
 
-  // Use `static` variable to remember the previous status.
-  static bool func_on = false;
-  if (func_on != IS_LAYER_ON_STATE(state, FUNC)) {
-    func_on = !func_on;
-    if (func_on) {
+    // Use `static` variable to remember the previous status.
+    static bool func_on = false;
+
+    if (func_on != IS_LAYER_ON_STATE(state, FUNC)) {
+        func_on = !func_on;
+        if (func_on) {
 // Just entered one of the FUNC layers.
 #if defined EXECUTE_ON_FUNC
-      register_code(KC_EXEC);
+            register_code(KC_EXEC);
 #endif
-    } else {
+        } else {
 // Just exited the one of FUNC layers.
 #if defined EXECUTE_ON_FUNC
-      unregister_code(KC_EXEC);
+            unregister_code(KC_EXEC);
 #endif
+        }
     }
-  }
 
 // always call cancel_key_lock()
 #ifdef KEY_LOCK_ENABLE
@@ -498,68 +508,97 @@ uint32_t layer_state_set_user(uint32_t state) {
   return state;
 }
 
+void matrix_scan_user(void) {
+    cmd_tab_switcher_matrix_scan_user();
+}
+
+
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case LT(HRDWR, KC_SPC):
-    case LT(AUX, KC_SPC):
-      return 350;
-    default:
-      return TAPPING_TERM;
-  }
+    switch (keycode) {
+        // // case LT(HRDWR, KC_SPC):
+        // // case LT(AUX, KC_SPC):
+        // case LT(HRDWR, KC_LEFT):
+        // case LT(MOUSE, KC_ESC):
+            // return 350;
+        // Increase Caps word accessibility
+        case KC_LSFT:
+            return 400;
+        default:
+            return TAPPING_TERM;
+    }
 }
 
 // Allow Permissive Hold per key (quickly use a layer hold)
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case RSFT_T(KC_ENT):   // quickly use right shift
-    case RGUI_T(KC_LEFT):  // quickly use mods on arrow cluster
-    case RALT_T(KC_DOWN):
-    case RCTL_T(KC_UP):
-      return true;
-    default:
-      return false;
-  }
+    switch (keycode) {
+        // case LT(NUMNAV, KC_ESC): // quickly use numbers
+        // case LT(SYMBL, KC_ENT): // quickly use symbols
+        case RSFT_T(KC_ENT):  // quickly use right shift
+        case LT(HRDWR, KC_LEFT): // quickly use mods on arrow cluster
+        case RGUI_T(KC_DOWN):
+        case RALT_T(KC_UP):
+        case RCTL_T(KC_RIGHT):
+            return true;
+        default:
+            return false;
+    }
 }
 
 // Mirror settings for get_permissive_hold()
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    case RSFT_T(KC_ENT):   // quickly use right shift
-    case RGUI_T(KC_LEFT):  // quickly use mods on arrow cluster
-    case RALT_T(KC_DOWN):
-    case RCTL_T(KC_UP):
-      return true;
-    default:
-      return false;
-  }
+    switch (keycode) {
+        // case LT(NUMNAV, KC_ESC):
+        // case LT(SYMBL, KC_ENT):
+        case RSFT_T(KC_ENT):  // quickly use right shift
+        case LT(HRDWR, KC_LEFT): // quickly use mods on arrow cluster
+        case RGUI_T(KC_DOWN):
+        case RALT_T(KC_UP):
+        case RCTL_T(KC_RIGHT):
+            return true;
+        default:
+            return false;
+    }
 }
 
 // bool get_ignore_mod_tap_interrupt(uint16_t keycode, keyrecord_t *record) {
-//   switch (keycode) {
-//     // Might roll through arrow keys
-//     case RGUI_T(KC_LEFT):
-//     case RALT_T(KC_DOWN):
-//     case RCTL_T(KC_UP):
-//       return true;
-//     default:
-//       return false;
-//   }
+//     switch (keycode) {
+//         // Might roll through arrow keys
+//         case RGUI_T(KC_LEFT):
+//         case RALT_T(KC_DOWN):
+//         case RCTL_T(KC_UP):
+//             return true;
+//         default:
+//             return false;
+//     }
 // }
 
 bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
-  switch (keycode) {
-    // Allow per key spamming for arrow keys, space, and dash
-    case RGUI_T(KC_LEFT):
-    case RALT_T(KC_DOWN):
-    case RCTL_T(KC_UP):
-      //   case LT(NUMPAD, KC_RIGHT):
-      //   case LT(NUMPAD, KC_SLASH):  // why not
-    case LT(HRDWR, KC_SPC):
-    case LT(AUX, KC_SPC):
-      // case LT(MOUSE, KC_MINUS):
-      return false;
-    // Force hold by default
-    default:
-      return true;
-  }
+    switch (keycode) {
+        // Allow per key spamming for arrow keys and escape
+        case LT(HRDWR, KC_LEFT): // quickly use mods on arrow cluster
+        case RGUI_T(KC_DOWN):
+        case RALT_T(KC_UP):
+        case RCTL_T(KC_RIGHT):
+        // case LT(NUMPAD, KC_RIGHT):
+        // case LT(NUMPAD, KC_SLASH): // why not
+        // case LT(HRDWR, KC_SPC):
+        // case LT(AUX, KC_SPC):
+        case MT(MOD_LCTL, KC_ESC):
+            return false;
+        // Force hold by default
+        default:
+            return true;
+    }
 }
+
+/* bool get_retro_tapping(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case LT(NUMNAV, KC_ESC):
+        case LT(SYMBL, KC_ENT):
+        case LT(AUX, KC_TAB):
+        case LT(HRDWR, KC_SPC):
+            return true;
+        default:
+            return false;
+    }
+} */

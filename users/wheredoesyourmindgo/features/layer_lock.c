@@ -11,17 +11,39 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-//
-// For full documentation, see
-// https://getreuer.info/posts/keyboards/layer-lock
+
+/**
+ * @file layer_lock.c
+ * @brief Layer Lock implementation
+ *
+ * For full documentation, see
+ * <https://getreuer.info/posts/keyboards/layer-lock>
+ */
 
 #include "layer_lock.h"
 
 // The current lock state. The kth bit is on if layer k is locked.
 static uint16_t locked_layers = 0;
 
-bool process_layer_lock(uint16_t keycode, keyrecord_t* record, uint16_t lock_keycode) {
+// Layer Lock timer to disable layer lock after X seconds inactivity
+#if LAYER_LOCK_IDLE_TIMEOUT > 0
+static uint32_t layer_lock_timer = 0;
+
+void layer_lock_task(void) {
+  if (locked_layers &&
+      timer_elapsed32(layer_lock_timer) > LAYER_LOCK_IDLE_TIMEOUT) {
+    layer_lock_all_off();
+    layer_lock_timer = timer_read32();
+  }
+}
+#endif  // LAYER_LOCK_IDLE_TIMEOUT > 0
+
+bool process_layer_lock(uint16_t keycode, keyrecord_t* record,
+                        uint16_t lock_keycode) {
+#if LAYER_LOCK_IDLE_TIMEOUT > 0
+  layer_lock_timer = timer_read32();
+#endif  // LAYER_LOCK_IDLE_TIMEOUT > 0
+
   // The intention is that locked layers remain on. If something outside of
   // this feature turned any locked layers off, unlock them.
   if ((locked_layers & ~layer_state) != 0) {
@@ -36,7 +58,7 @@ bool process_layer_lock(uint16_t keycode, keyrecord_t* record, uint16_t lock_key
   }
 
   switch (keycode) {
-    case QK_MOMENTARY ... QK_MOMENTARY_MAX:                  // `MO(layer)` keys.
+    case QK_MOMENTARY ... QK_MOMENTARY_MAX:  // `MO(layer)` keys.
     case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE_MAX: {  // `TT(layer)`.
       const uint8_t layer = keycode & 255;
       if (is_layer_locked(layer)) {
@@ -50,7 +72,8 @@ bool process_layer_lock(uint16_t keycode, keyrecord_t* record, uint16_t lock_key
 
 #ifndef NO_ACTION_TAPPING
     case QK_LAYER_TAP ... QK_LAYER_TAP_MAX:  // `LT(layer, key)` keys.
-      if (record->tap.count == 0 && !record->event.pressed && is_layer_locked((keycode >> 8) & 15)) {
+      if (record->tap.count == 0 && !record->event.pressed &&
+          is_layer_locked((keycode >> 8) & 15)) {
         // Release event on a held layer-tap key where the layer is locked.
         return false;  // Skip default handling so that layer stays on.
       }
@@ -61,7 +84,9 @@ bool process_layer_lock(uint16_t keycode, keyrecord_t* record, uint16_t lock_key
   return true;
 }
 
-bool is_layer_locked(uint8_t layer) { return locked_layers & ((uint16_t)1 << layer); }
+bool is_layer_locked(uint8_t layer) {
+  return locked_layers & ((uint16_t)1 << layer);
+}
 
 void layer_lock_invert(uint8_t layer) {
   const uint16_t mask = (uint16_t)1 << layer;
@@ -72,6 +97,9 @@ void layer_lock_invert(uint8_t layer) {
     }
 #endif  // NO_ACTION_ONESHOT
     layer_on(layer);
+#if LAYER_LOCK_IDLE_TIMEOUT > 0
+    layer_lock_timer = timer_read32();
+#endif  // LAYER_LOCK_IDLE_TIMEOUT > 0
   } else {  // Layer is being unlocked.
     layer_off(layer);
   }
@@ -89,6 +117,11 @@ void layer_lock_off(uint8_t layer) {
   if (is_layer_locked(layer)) {
     layer_lock_invert(layer);
   }
+}
+
+void layer_lock_all_off(void) {
+  layer_and(~locked_layers);
+  locked_layers = 0;
 }
 
 __attribute__((weak)) void layer_lock_set_user(uint16_t locked_layers) {}
