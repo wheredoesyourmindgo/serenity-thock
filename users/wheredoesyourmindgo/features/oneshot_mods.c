@@ -5,12 +5,17 @@
 void oneshot_mods_layer_state(uint16_t state) {
     switch (get_highest_layer(state)) {
         case BASE:
+        case QWRTY:
+        // AUX and HRDWR are required in order to use OSM with Function layer.
+        case AUX:
+        case HRDWR:
             break;
-        //  for any other layers, or the default layer
+        //  for any other layers
         default:
             // Cancel One Shot Mods (if active) is necessary when switching to layers OTHER than base layer. This will prevent an issue where the keyboard might get stuck in a layer.
             if (ONESHOT_MODS_ACTIVE) {
                 clear_oneshot_mods();
+                send_keyboard_report();
             }
             break;
     }
@@ -97,19 +102,6 @@ bool process_oneshot_mods(uint16_t keycode, keyrecord_t* record) {
                 }
             }
             break;
-        // case LT(NUMNAV, KC_ESC):
-        //     if (record->event.pressed) {
-        //         // Only on tap (ie. Not during LT(NUMNAV)
-        //         if (record->tap.count > 0) {
-        //             // Cancel One Shot Mods (if active)
-        //             if (ONESHOT_MODS_ACTIVE) {
-        //                 clear_oneshot_mods();
-        //                 // Only fire escape special mode is not active
-        //                 return false;
-        //             }
-        //         }
-        //     }
-        //     break;
     }
 
     return true;
