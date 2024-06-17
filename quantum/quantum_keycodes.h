@@ -617,6 +617,9 @@ enum quantum_keycodes {
 
 // L-ayer, T-ap - 256 keycode max, 16 layer max
 #define LT(layer, kc) (QK_LAYER_TAP | (((layer) & 0xF) << 8) | ((kc) & 0xFF))
+// added (wheredoesmindgo)
+#define QK_LAYER_TAP_GET_LAYER(kc) (((kc) >> 8) & 0xF)
+#define QK_LAYER_TAP_GET_TAP_KEYCODE(kc) ((kc)&0xFF)
 
 #define AG_SWAP MAGIC_SWAP_ALT_GUI
 #define AG_NORM MAGIC_UNSWAP_ALT_GUI
@@ -634,6 +637,8 @@ enum quantum_keycodes {
 
 // Momentary switch layer - 256 layer max
 #define MO(layer) (QK_MOMENTARY | ((layer) & 0xFF))
+// added (wheredoesyourmindgo)
+#define QK_MOMENTARY_GET_LAYER(kc) ((kc)&0x1F)
 
 // Set default layer - 256 layer max
 #define DF(layer) (QK_DEF_LAYER | ((layer) & 0xFF))
@@ -646,12 +651,17 @@ enum quantum_keycodes {
 
 // L-ayer M-od: Momentary switch layer with modifiers active - 16 layer max, left mods only
 #define LM(layer, mod) (QK_LAYER_MOD | (((layer) & 0xF) << 4) | ((mod) & 0xF))
+// added (wheredoesyourmindgo)
+#define QK_LAYER_MOD_GET_LAYER(kc) (((kc) >> 5) & 0xF)
+#define QK_LAYER_MOD_GET_MODS(kc) ((kc)&0x1F)
 
 // One-shot mod
 #define OSM(mod) (QK_ONE_SHOT_MOD | ((mod) & 0xFF))
 
 // Layer tap-toggle
 #define TT(layer) (QK_LAYER_TAP_TOGGLE | ((layer) & 0xFF))
+// added (wheredoesyourmindgo)
+#define QK_LAYER_TAP_TOGGLE_GET_LAYER(kc) ((kc)&0x1F)
 
 // M-od, T-ap - 256 keycode max
 #define MT(mod, kc) (QK_MOD_TAP | (((mod) & 0x1F) << 8) | ((kc) & 0xFF))
@@ -721,5 +731,7 @@ enum quantum_keycodes {
   #define SH_ON    (QK_SWAP_HANDS | OP_SH_ON)
   #define SH_OFF   (QK_SWAP_HANDS | OP_SH_OFF)
 #endif
+
+
 
 #endif // QUANTUM_KEYCODES_H

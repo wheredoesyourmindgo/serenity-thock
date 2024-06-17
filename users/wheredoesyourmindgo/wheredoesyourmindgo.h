@@ -2,6 +2,7 @@
 #define USERSPACE
 
 #include "quantum.h"
+
 #define MODS_RSFT (get_mods() & MOD_BIT(KC_RSFT))
 #define MODS_LSFT (get_mods() & MOD_BIT(KC_LSFT))
 #define MODS_RCTRL (get_mods() & MOD_BIT(KC_RCTL))
@@ -92,7 +93,7 @@
 #define WNDW_RGNT_THRD LCA(KC_G)    // Right third
 #define WNDW_LFT_HLF LCA(KC_LEFT)   // Left half
 #define WNDW_CNTR_HLF HYPR(KC_G)    // Center
-#define WNDW_LST HYPR(KC_V)         // Last
+#define WNDW_LWP HYPR(KC_V)         // Last
 #define WNDW_RGHT_HLF LCA(KC_RGHT)  // Right half
 #define WNDW_TOP_HLF LCA(KC_UP)     // Top half
 #define WNDW_BTTM_HLF LCA(KC_DOWN)  // Bottom half
@@ -112,14 +113,14 @@
 // #define WNDW_THRD_FRTH HYPR(KC_?)   // Third fourth
 // #define WNDW_FRTH_FRTH HYPR(KC_?)   // Fourth fourth
 // #define WNDW_FST_TFRTH HYPR(KC_?)   // First three-fourth
-// #define WNDW_LST_TFRTH HYPR(KC_?)   // Last three-fourth
+// #define WNDW_LWP_TFRTH HYPR(KC_?)   // Last three-fourth
 
 // OS (MacOS)
 #define OS_PRV_SPC LCTL(KC_LEFT)               // Previous Space
 #define OS_NXT_SPC LCTL(KC_RGHT)               // Next Space
 #define OS_EXPOSE LCTL(KC_DOWN)                // App Windows
 #define OS_MSN_CNTRL LCTL(KC_UP)               // Mission Control
-#define OS_DSKTP KC_F16                        // Show Desktop
+#define OS_DSKTP KC_F11                        // Show Desktop
 #define OS_SCRN_SHT_OPT SGUI(KC_5)             // Screenshot Options
 #define OS_SCRN_SHT_SLCT SGUI(KC_4)            // Screenshot of selected area
 #define OS_SCRN_SHT SGUI(KC_3)                 // Screenshot
@@ -179,15 +180,20 @@
 // Long taps
 #define QUOT_LP LT(0, KC_QUOT)
 #define DOT_LP LT(0, KC_DOT)
-#define MSN_LP_FLLSCRN LT(0, KC_1) // Using non-basic keycode with long press so utility func will not work here, see https://getreuer.info/posts/keyboards/triggers/index.html#tap-vs.-long-press for more info
-#define WNDW_LP_MAX LT(0, KC_2)
-#define WNDW_LP_RST LT(0, KC_3)
-#define WNDW_LP_CNTR LT(0, KC_4)
+// For the following, using non-basic keycodes with long press so utility func will not work here, see https://getreuer.info/posts/keyboards/triggers/index.html#tap-vs.-long-press for more info
+#define MSN_LP_FLLSCRN LT(0, KC_1)
+#define WNDW_LP_VRT_MAX LT(0, KC_2)
+#define WNDW_LP_LWP LT(0, KC_3)
+#define WNDW_LP_ALMST_MAX LT(0, KC_4)
 #define WNDW_LP_SMLR LT(0, KC_5)
 #define WNDW_LP_LGR LT(0, KC_6)
 #define PRV_SPC_LP LT(0, KC_7)
 #define NXT_SPC_LP LT(0, KC_8)
 #define TGL_SELECT_LP LT(0, KC_9)
+#define OS_LP_SCRN_SHT_FULL LT(0, KC_A)
+#define OS_LP_SCRN_SHT_SLCT LT(0, KC_B)
+// #define OS_LP_SPTLGHT LT(0, KC_C)
+
 
 enum layers { BASE, QWRTY, NUMNAV, SYMBL, AUX, HRDWR, FUNC, OS };
 
@@ -195,11 +201,13 @@ enum custom_keycodes {
     CMD_TAB_PRV = SAFE_RANGE, TGL_LYT, CMD_TAB_NXT, DISP_FDIM, DISP_FBRI, XOSM_LSFT, XOSM_LGUI, XOSM_LALT, XOSM_LCTL,
     XOSM_RSFT, XOSM_RGUI, XOSM_RALT, XOSM_RCTL, WNDW_FSCRN, OS_BSPC, OS_DEL, OS_BCK_FWD, LLOCK, ENC_BTN, NO_VOL
 };
+
 bool process_tap_or_long_press_key(keyrecord_t* record, uint16_t long_press_keycode);
 void tap_code_no_mod(uint8_t);
 void tap_code16_no_mod(uint16_t);
 void tap_code_unset_mod(uint8_t);
 void tap_code16_unset_mod(uint16_t);
 bool encoder_update_keymap(uint8_t index, bool clockwise);
+
 
 #endif

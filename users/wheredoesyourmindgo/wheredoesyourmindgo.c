@@ -273,44 +273,31 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_DELETE);
             }
             break;
-        case WNDW_LP_MAX:
-            if (record->tap.count > 0) { // Key is being tapped.
-                if (record->event.pressed) {
-                    // Handle tap press event...
-                    tap_code16(WNDW_VRT_MAX);
-                }
-            } else { // Key is being held.
-                if (record->event.pressed) {
-                    // Handle hold press event...
-                    tap_code16(WNDW_MAX);
-                }
-            }
-            return false; // Skip default handling.
-            break;
-        case WNDW_LP_CNTR:
-            if (record->tap.count > 0) { // Key is being tapped.
-                if (record->event.pressed) {
+        case WNDW_LP_VRT_MAX:
+            if (record->event.pressed) {
+                // Key is being tapped.
+                if (record->tap.count == 1) {
                     // Handle tap press event...
                     tap_code16(WNDW_ALMST_MAX);
-                }
-            } else { // Key is being held.
-                if (record->event.pressed) {
+                } else if (record->tap.count > 1) {
+                    // Handle tap press event...
+                    tap_code16(WNDW_VRT_MAX);
+                // Key is being held.
+                } else {
                     // Handle hold press event...
-                    tap_code16(WNDW_CNTR);
+                    tap_code16(WNDW_VRT_MAX);
                 }
             }
             return false; // Skip default handling.
             break;
-        case WNDW_LP_RST:
-            if (record->tap.count > 0) { // Key is being tapped.
-                if (record->event.pressed) {
+        case WNDW_LP_ALMST_MAX:
+            if (record->event.pressed) {
+                if (record->tap.count > 0) { // Key is being tapped.
                     // Handle tap press event...
-                    tap_code16(WNDW_LST);
-                }
-            } else { // Key is being held.
-                if (record->event.pressed) {
+                    tap_code16(WNDW_LFT_HLF);
+                } else { // Key is being held.
                     // Handle hold press event...
-                    tap_code16(WNDW_RSTR);
+                    tap_code16(WNDW_MAX);
                 }
             }
             return false; // Skip default handling.
@@ -324,7 +311,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else { // Key is being held.
                 if (record->event.pressed) {
                     // Handle hold press event...
-                    tap_code16(WNDW_LFT_HLF);
+                    tap_code16(WNDW_CNTR);
                 }
             }
             return false; // Skip default handling.
@@ -338,7 +325,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else { // Key is being held.
                 if (record->event.pressed) {
                     // Handle hold press event...
+                    tap_code16(WNDW_RSTR);
+                }
+            }
+            return false; // Skip default handling.
+            break;
+        case WNDW_LP_LWP:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
                     tap_code16(WNDW_RGHT_HLF);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(WNDW_LWP);
                 }
             }
             return false; // Skip default handling.
@@ -406,28 +407,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
-        case MT(MOD_LCTL, KC_ESC):
-            if (record->tap.count > 0) { // Key is being tapped.
-                if (record->event.pressed) {
-                    const uint8_t layer = get_highest_layer(layer_state);
-                    if (is_layer_locked(layer)) {
-                        layer_lock_off(layer);
-                        return false; // Skip default handling.
-                    }
-                }
-            }
-            break;
-        // case LT(NUMNAV, KC_ESC):
-        //     if (record->tap.count > 0) {
-        //         if (record->event.pressed) {
-        //             const uint8_t layer = get_highest_layer(layer_state);
-        //             if (is_layer_locked(layer)) {
-        //                 layer_lock_off(layer);
-        //                 return false;  // Skip default handling.
-        //             }
-        //         }
-        //     }
-        //     break;
         case TGL_SELECT_LP:
             if (record->tap.count > 0) {
                 if (record->event.pressed) {
@@ -461,6 +440,48 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         //         }
         //     }
         //     return false; // Skip default handling.
+        //     break;
+        case OS_LP_SCRN_SHT_FULL:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(OS_SCRN_SHT);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(OS_SCRN_SHT_CLP);
+                }
+            }
+            return false;
+            break;
+        case OS_LP_SCRN_SHT_SLCT:
+            if (record->tap.count > 0) { // Key is being tapped.
+                if (record->event.pressed) {
+                    // Handle tap press event...
+                    tap_code16(OS_SCRN_SHT_SLCT);
+                }
+            } else { // Key is being held.
+                if (record->event.pressed) {
+                    // Handle hold press event...
+                    tap_code16(OS_SCRN_SHT_CLP_SLCT);
+                }
+            }
+            return false;
+            break;
+        // case OS_LP_SPTLGHT:
+        //     if (record->tap.count > 0) { // Key is being tapped.
+        //         if (record->event.pressed) {
+        //             // Handle tap press event...
+        //             tap_code16(OS_SPTLGHT);
+        //         }
+        //     } else { // Key is being held.
+        //         if (record->event.pressed) {
+        //             // Handle hold press event...
+        //             tap_code16(OS_SPTLGHT_FNDR);
+        //         }
+        //     }
+        //     return false;
         //     break;
     }
     return true;
@@ -515,14 +536,9 @@ void matrix_scan_user(void) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // // case LT(HRDWR, KC_SPC):
-        // // case LT(AUX, KC_SPC):
-        // case LT(HRDWR, KC_LEFT):
-        // case LT(MOUSE, KC_ESC):
-            // return 350;
         // Increase Caps word accessibility
         case KC_LSFT:
-            return 400;
+            return 300;
         default:
             return TAPPING_TERM;
     }
@@ -531,8 +547,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 // Allow Permissive Hold per key (quickly use a layer hold)
 bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // case LT(NUMNAV, KC_ESC): // quickly use numbers
-        // case LT(SYMBL, KC_ENT): // quickly use symbols
         case RSFT_T(KC_ENT):  // quickly use right shift
         case LT(HRDWR, KC_LEFT): // quickly use mods on arrow cluster
         case RGUI_T(KC_DOWN):
@@ -547,8 +561,6 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t *record) {
 // Mirror settings for get_permissive_hold()
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        // case LT(NUMNAV, KC_ESC):
-        // case LT(SYMBL, KC_ENT):
         case RSFT_T(KC_ENT):  // quickly use right shift
         case LT(HRDWR, KC_LEFT): // quickly use mods on arrow cluster
         case RGUI_T(KC_DOWN):
