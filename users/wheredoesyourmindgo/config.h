@@ -1,6 +1,7 @@
 #pragma once
 
 #define TAPPING_TERM 200
+#define OSM_TAPPING_TERM 300
 #define TAPPING_TERM_PER_KEY
 
 // #define IGNORE_MOD_TAP_INTERRUPT_PER_KEY
