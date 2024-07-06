@@ -7,6 +7,7 @@
 #include "features/symbol_rolls.h"
 #include "features/mash_arrows.h"
 #include "features/layer_lock.h"
+#include "features/mo_ext.h"
 #include "print.h"
 // #include "features/hide_and_mute.h"
 
@@ -250,6 +251,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!process_mash_arrows(keycode, record)) {
       return false;
     }
+  }
+  if (!process_mo_ext(keycode, record)) {
+    return false;
   }
 
   switch (keycode) {

@@ -19,6 +19,7 @@ SRC += features/cmd_tab_switcher.c
 SRC += features/symbol_rolls.c
 SRC += features/mash_arrows.c
 SRC += features/layer_lock.c
+SRC += features/mo_ext.c
 
 ifeq ($(strip $(EXECUTE_ON_FUNC)), yes)
   OPT_DEFS += -DEXECUTE_ON_FUNC
