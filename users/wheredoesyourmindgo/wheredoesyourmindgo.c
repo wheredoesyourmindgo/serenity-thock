@@ -422,6 +422,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Cancel Layer Lock on Escape
         case KC_ESC:
             if (record->event.pressed) {
+                // cancel oneshot mods if active
+                if (cancel_oneshot_mods_if_active()) {
+                    return false; // suppress actual Esc press
+                }
+                // cancel layer lock if active
                 const uint8_t layer = get_highest_layer(layer_state);
                 if (is_layer_locked(layer)) {
                     layer_lock_off(layer);
@@ -520,28 +525,21 @@ void keyboard_post_init_user(void) {
 
 uint32_t layer_state_set_user(uint32_t state) {
     cmd_tab_switcher_layer_state(state);
-    oneshot_mods_layer_state(state);
+
+    // one shot mods cancellation
+    switch (get_highest_layer(state)) {
+        case BASE:
+        case QWRTY:
+        case AUX:
+        case HRDWR:
+            break; // preserve OSM (AUX & HRDWR needed for function keys)
+        default:
+            cancel_oneshot_mods_if_active();
+            break;
+    }
 
     state = update_tri_layer_state(state, NUMNAV, SYMBL, OS);
     state = update_tri_layer_state(state, HRDWR, AUX, FUNC);
-
-    // Use `static` variable to remember the previous status.
-    static bool func_on = false;
-
-    if (func_on != IS_LAYER_ON_STATE(state, FUNC)) {
-        func_on = !func_on;
-        if (func_on) {
-// Just entered one of the FUNC layers.
-#if defined EXECUTE_ON_FUNC
-            register_code(KC_EXEC);
-#endif
-        } else {
-// Just exited the one of FUNC layers.
-#if defined EXECUTE_ON_FUNC
-            unregister_code(KC_EXEC);
-#endif
-        }
-    }
 
 // always call cancel_key_lock()
 #ifdef KEY_LOCK_ENABLE
@@ -553,6 +551,8 @@ uint32_t layer_state_set_user(uint32_t state) {
 
 void matrix_scan_user(void) {
     cmd_tab_switcher_matrix_scan_user();
+    // Enforce oneshot timeout each scan
+    oneshot_mods_task();
 }
 
 
